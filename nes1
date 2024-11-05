@@ -1,1 +1,78 @@
+#include <stdio.h>
+#include <conio.h> // For kbhit() and getch()
+#include <stdlib.h> // For system("cls")
+#include <time.h>   // For randomizing obstacles
+
+#define ROAD_WIDTH 30
+#define SCREEN_HEIGHT 20 //for screen h
+
+int carPosition = ROAD_WIDTH / 2;
+int obstaclePosition = 0;
+int obstacleX = ROAD_WIDTH / 2;
+int score = 0;
+int isGameOver = 0;
+
+// Function to display the game state
+void displayGame() {
+    system("cls"); // Clear the screen
+
+    // Draw the road
+    for (int y = 0; y < SCREEN_HEIGHT; y++) {
+        for (int x = 0; x < ROAD_WIDTH; x++) {
+            if (x == 0 || x == ROAD_WIDTH - 1) {
+                printf("|"); 
+          } else if (y == SCREEN_HEIGHT - 2 && x == carPosition) {
+                printf("C"); 
+            } else if (y == obstaclePosition && x == obstacleX) {
+                printf("O"); // Obstacle
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
+    printf("\nScore: %d\n", score);
+}
+
+
+void updateGame() {
+    obstaclePosition++;
+    
+    if (obstaclePosition >= SCREEN_HEIGHT - 1) {
+        obstaclePosition = 0;
+        obstacleX = rand() % (ROAD_WIDTH - 2) + 1; // New obstacle in a random position
+        score++;
+    }
+
+    if (obstaclePosition == SCREEN_HEIGHT - 2 && obstacleX == carPosition) {
+        isGameOver = 1; 
+    }
+}
+
+// Main game loop
+int main() {
+    srand(time(0)); 
+
+    while (!isGameOver) {
+        if (_kbhit()) {
+            char key = _getch(); 
+
+            if (key == 'a' || key == 'A') {
+                carPosition--; 
+            } else if (key == 'd' || key == 'D') {
+                carPosition++; 
+            }
+        }
+
+        updateGame();
+        displayGame();
+
+        _sleep(200);
+    }
+
+    printf("\nGame Over! Final Score: %d\n", score);
+
+    return 0;
+}
 
